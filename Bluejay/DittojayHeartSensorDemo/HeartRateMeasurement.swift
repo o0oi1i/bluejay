@@ -24,5 +24,4 @@ struct HeartRateMeasurement: Sendable {
     func toBluetoothData() -> Data {
         return Bluejay.combine(sendables: [flags, measurement8bits, measurement16bits, energyExpended, rrInterval])
     }
-
 }

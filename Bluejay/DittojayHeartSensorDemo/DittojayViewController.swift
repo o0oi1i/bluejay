@@ -45,6 +45,8 @@ class DittojayViewController: UITableViewController {
         heartRateService = CBMutableService(type: heartRateServiceUUID, primary: true)
         heartRateService.characteristics = [heartRateCharacteristic]
 
+        debugPrint("\(#line) : Will add heartrate service...")
+
         manager.add(heartRateService)
     }
 
@@ -67,7 +69,7 @@ class DittojayViewController: UITableViewController {
         wakeAppService = CBMutableService(type: wakeAppServiceUUID, primary: true)
         wakeAppService.characteristics = [wakeAppCharacteristic]
 
-        debugPrint("Will add wake app service...")
+        debugPrint("\(#line) : Will add wake app service...")
 
         manager.add(wakeAppService)
     }
@@ -77,16 +79,16 @@ class DittojayViewController: UITableViewController {
             addedService.uuid == wakeAppService.uuid
         }
 
-        debugPrint("Will remove wake app service...")
+        debugPrint("\(#line) : Will remove wake app service...")
 
         manager.remove(wakeAppService)
 
         if manager.isAdvertising {
-            debugPrint("Will stop advertising...")
+            debugPrint("\(#line) : Will stop advertising...")
             manager.stopAdvertising()
         }
 
-        debugPrint("Will start advertising...")
+        debugPrint("\(#line) : Will start advertising...")
         advertiseServices([heartRateService.uuid])
     }
 
@@ -110,7 +112,7 @@ class DittojayViewController: UITableViewController {
         pairingService = CBMutableService(type: pairingServiceUUID, primary: true)
         pairingService.characteristics = [pairingCharacteristic]
 
-        debugPrint("Will add pairing service...")
+        debugPrint("\(#line) : Will add pairing service...")
 
         manager.add(pairingService)
     }
@@ -211,7 +213,7 @@ class DittojayViewController: UITableViewController {
 
 extension DittojayViewController: CBPeripheralManagerDelegate {
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
-        debugPrint("Did update state.")
+        debugPrint("\(#line) : Did update state.")
 
         if peripheral.state == .poweredOn {
             addHeartRateService()
@@ -222,26 +224,26 @@ extension DittojayViewController: CBPeripheralManagerDelegate {
 
     func peripheralManager(_ peripheral: CBPeripheralManager, didAdd service: CBService, error: Error?) {
         if let error = error {
-            debugPrint("Failed to add service \(service.uuid.uuidString) with error: \(error.localizedDescription)")
+            debugPrint("\(#line) : Failed to add service \(service.uuid.uuidString) with error: \(error.localizedDescription)")
         } else {
-            if !addedServices.contains { addedService -> Bool in
+            if !addedServices.contains(where: { addedService -> Bool in
                 addedService.uuid == service.uuid
-            } {
-                debugPrint("Added service \(service.uuid.uuidString)")
+            }) {
+                debugPrint("\(#line) : Added service \(service.uuid.uuidString)")
                 addedServices.append(service)
             }
 
             if addedServices.contains(heartRateService) && addedServices.contains(wakeAppService) {
                 if manager.isAdvertising {
-                    debugPrint("Will stop advertising...")
+                    debugPrint("\(#line) : Will stop advertising...")
                     manager.stopAdvertising()
                 }
 
-                debugPrint("Will start advertising...")
+                debugPrint("\(#line) : Will start advertising...")
                 advertiseServices([heartRateService.uuid, wakeAppService.uuid])
 
                 if timer == nil {
-                    debugPrint("Will start heart rate sensor...")
+                    debugPrint("\(#line) : Will start heart rate sensor...")
                     startHeartRateSensor()
                 }
             }
@@ -250,22 +252,22 @@ extension DittojayViewController: CBPeripheralManagerDelegate {
 
     func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?) {
         if let error = error {
-            debugPrint("Failed to start advertising with error: \(error.localizedDescription)")
+            debugPrint("\(#line) : Failed to start advertising with error: \(error.localizedDescription)")
         } else {
-            debugPrint("Started advertising")
+            debugPrint("\(#line) : Started advertising")
         }
     }
 
     func peripheralManager(_ peripheral: CBPeripheralManager, central: CBCentral, didSubscribeTo characteristic: CBCharacteristic) {
-        debugPrint("Did subscribe to: \(characteristic.uuid.uuidString)")
+        debugPrint("\(#line) : Did subscribe to: \(characteristic.uuid.uuidString)")
     }
 
     func peripheralManager(_ peripheral: CBPeripheralManager, central: CBCentral, didUnsubscribeFrom characteristic: CBCharacteristic) {
-        debugPrint("Did unsubscribe from: \(characteristic.uuid.uuidString)")
+        debugPrint("\(#line) : Did unsubscribe from: \(characteristic.uuid.uuidString)")
     }
 
     func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveRead request: CBATTRequest) {
-        debugPrint("Did receive read request for: \(request.characteristic.uuid.uuidString)")
+        debugPrint("\(#line) : Did receive read request for: \(request.characteristic.uuid.uuidString)")
         if request.characteristic.uuid == pairingCharacteristic.uuid {
             peripheral.respond(to: request, withResult: .success)
         }
