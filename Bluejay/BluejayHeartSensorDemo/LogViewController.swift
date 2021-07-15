@@ -34,12 +34,11 @@ class LogViewController: UIViewController {
     @IBAction func exportLogs() {
         present(UIActivityViewController(activityItems: [logTextView.text ?? ""], applicationActivities: nil), animated: true, completion: nil)
     }
-
 }
 
 extension LogViewController: LogObserver {
+    
     func debug(_ text: String) {
         logTextView.text.append(text + "\n")
     }
-
 }

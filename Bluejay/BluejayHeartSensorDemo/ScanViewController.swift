@@ -33,6 +33,16 @@ class ScanViewController: UITableViewController {
 
         bluejay.registerDisconnectHandler(handler: self)
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        bluejay.register(connectionObserver: self)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        bluejay.unregister(connectionObserver: self)
+    }
 
     @objc func appDidResume() {
         scanHeartSensors()
@@ -81,20 +91,6 @@ class ScanViewController: UITableViewController {
         }
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        bluejay.register(connectionObserver: self)
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        bluejay.unregister(connectionObserver: self)
-    }
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return sensors.count
     }
@@ -123,6 +119,7 @@ class ScanViewController: UITableViewController {
 }
 
 extension ScanViewController: ConnectionObserver {
+    
     func bluetoothAvailable(_ available: Bool) {
         debugLog("ScanViewController - Bluetooth available: \(available)")
 
@@ -136,11 +133,12 @@ extension ScanViewController: ConnectionObserver {
 
     func connected(to peripheral: PeripheralIdentifier) {
         debugLog("ScanViewController - Connected to: \(peripheral.description)")
-        performSegue(withIdentifier: "showSensor", sender: self)
+        performSegue(withIdentifier: "showFileSender", sender: self)
     }
 }
 
 extension ScanViewController: DisconnectHandler {
+    
     func didDisconnect(from peripheral: PeripheralIdentifier, with error: Error?, willReconnect autoReconnect: Bool) -> AutoReconnectMode {
         if navigationController?.topViewController is ScanViewController {
             scanHeartSensors()

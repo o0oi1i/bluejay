@@ -36,5 +36,4 @@ struct HeartRateMeasurement: Receivable {
             measurement16bits = try bluetoothData.extract(start: 1, length: 2)
         }
     }
-
 }

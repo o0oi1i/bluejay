@@ -43,10 +43,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         return true
     }
-
 }
 
 extension AppDelegate: BackgroundRestorer {
+    
     func didRestoreConnection(to peripheral: PeripheralIdentifier) -> BackgroundRestoreCompletion {
         let content = UNMutableNotificationContent()
         content.title = "Bluejay Heart Sensor"
@@ -71,6 +71,7 @@ extension AppDelegate: BackgroundRestorer {
 }
 
 extension AppDelegate: ListenRestorer {
+    
     func didReceiveUnhandledListen(from peripheral: PeripheralIdentifier, on characteristic: CharacteristicIdentifier, with value: Data?) -> ListenRestoreAction {
         let content = UNMutableNotificationContent()
         content.title = "Bluejay Heart Sensor"

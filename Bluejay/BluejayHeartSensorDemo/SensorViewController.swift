@@ -14,10 +14,12 @@ let heartRateCharacteristic = CharacteristicIdentifier(
     uuid: "2A37",
     service: ServiceIdentifier(uuid: "180D")
 )
+
 let chirpCharacteristic = CharacteristicIdentifier(
     uuid: "83B4A431-A6F1-4540-B3EE-3C14AEF71A04",
     service: ServiceIdentifier(uuid: "CED261B7-F120-41C8-9A92-A41DE69CF2A8")
 )
+
 let pairingCharacteristic = CharacteristicIdentifier(
     uuid: "E4D4A76C-B9F1-422F-8BBA-18508356A145",
     service: ServiceIdentifier(uuid: "16274BFE-C539-416C-9646-CA3F991DADD6")
@@ -75,7 +77,7 @@ class SensorViewController: UITableViewController {
                 cell.detailTextLabel?.text = bluejay.isConnected ? "Connected" : "Disconnected"
             } else {
                 cell.textLabel?.text = "Heart Rate"
-                cell.detailTextLabel?.text = String(heartRate?.measurement ?? 0)
+                cell.detailTextLabel?.text = String(heartRate?.measurement ?? -1)
 
                 DispatchQueue.main.async {
                     UIView.animate(withDuration: 0.25, animations: {
@@ -161,9 +163,7 @@ class SensorViewController: UITableViewController {
 
     private func listen(to characteristic: CharacteristicIdentifier) {
         if characteristic == heartRateCharacteristic {
-            bluejay.listen(
-                to: heartRateCharacteristic,
-                multipleListenOption: .replaceable) { [weak self] (result: ReadResult<HeartRateMeasurement>) in
+            bluejay.listen(to: heartRateCharacteristic, multipleListenOption: .replaceable) { [weak self] (result: ReadResult<HeartRateMeasurement>) in
                     guard let weakSelf = self else {
                         return
                     }
